@@ -1,11 +1,38 @@
 const express = require('express');
+const connectDB = require('./config/database');
+const user=require('./Models/user');
+const authRouter=require('./Routes/authroute');
+const profileRouter=require('./Routes/profileroute');
+const requestRoter=require('./Routes/requestroute');
+const cookieParser = require('cookie-parser');
+const userRouter=require('./Routes/user');
 const app = express();
-app.use("/home", (req, res)=> {
-    res.send("Welcome to the Home Page!");
+const cros=require('cors');
+app.use(cros(
+    {
+        origin: 'http://localhost:5173',
+        credentials: true,
+    }
+));
+app.use(express.json());
+app.use(cookieParser());
+app.use("/",authRouter);
+app.use("/",profileRouter);
+app.use("/",requestRoter);
+app.use("/",userRouter);
+
+
+
+
+connectDB().then(() => {
+    console.log("Database connected successfully");
+    app.listen(7777, () => {
+    console.log("Server is running on port 7777");
 });
-app.use("/about", (req, res)=> {
-    res.send("Welcome to the About Page!");
+}).catch((err) => {
+    console.error("Database connection failed", err);
 });
-app.listen(3000, () => {
-    console.log("Server is running on port 3000");
-});
+
+
+
+
