@@ -21,7 +21,7 @@ userRouter.get('/user/connections',adminAuth,async(req,res)=>{ //get all connect
         const connections=await connectionRequest.find({$or:[
             {fromuserId:logInuser._id,status:"Accepted"},
             {touserId:logInuser._id,status:"Accepted"}
-        ]}).populate('fromuserId touserId'," firstName lastName photourl about skills"); //find all connection requests where the logged in user is either sender or receiver and status is Accepted in array of objects
+        ]}).populate('fromuserId touserId'," firstName age gender lastName photourl about skills"); //find all connection requests where the logged in user is either sender or receiver and status is Accepted in array of objects
 
         const data=connections.map((connections)=>{
         if(connections.fromuserId._id.equals(logInuser._id)){
