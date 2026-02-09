@@ -4,6 +4,8 @@ const user=require('../Models/user');
 const {validateUserData}=require('../utils/validation');
 const validator=require('validator');
 const bcrypt=require('bcrypt');
+const SendEmail=require('../utils/SendEmail')
+
 authRouter.post('/signup',async(req,res)=>{
    
     try{
@@ -38,7 +40,10 @@ authRouter.post('/login',async(req,res)=>{
             throw new Error("Invalid password.");
         }
         else{
+            const emailres=await SendEmail.run();
+            console.log(emailres);
             res.json(existingUser);
+
         }
     }catch(err){
         res.status(500).send("Error logging in user"+err.message);

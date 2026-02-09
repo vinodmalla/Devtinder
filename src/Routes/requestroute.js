@@ -2,6 +2,7 @@ const express=require('express');
 const user=require('../Models/user');
 const {adminAuth}=require('../middleware/auth');
 const connectionRequest = require('../Models/conectionreques');
+const {SendEmail}=require("../utils/SendEmail")
 
 const requestRoter=express.Router();
 requestRoter.post('/request/:status/:userId',adminAuth,async(req,res)=>{
@@ -30,6 +31,8 @@ requestRoter.post('/request/:status/:userId',adminAuth,async(req,res)=>{
             status
         });
         await newConnectionRequest.save();
+        const emailres=await SendEmail.run();
+        console.log(emailres);
         res.send(`${req.user.firstName} Connection request ${status} successfully.`)
 
     }
