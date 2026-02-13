@@ -10,6 +10,7 @@ const connectionReuestSchema=new mongoose.Schema({
     touserId:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,
+        ref:"User"
     },
     status:{
         type:String,

@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require('express');
+require("./utils/Cronjob")
 
 const connectDB = require('./config/database');
 const user=require('./Models/user');
@@ -10,6 +11,7 @@ const cookieParser = require('cookie-parser');
 const userRouter=require('./Routes/user');
 const app = express();
 const cros=require('cors');
+const paymentroute=require("./Routes/paymentroute")
 app.use(cros(
     {
         origin: 'http://localhost:5173',
@@ -22,6 +24,7 @@ app.use("/",authRouter);
 app.use("/",profileRouter);
 app.use("/",requestRoter);
 app.use("/",userRouter);
+app.use("/",paymentroute);
 
 
 

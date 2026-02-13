@@ -25,14 +25,16 @@ requestRoter.post('/request/:status/:userId',adminAuth,async(req,res)=>{
         if(!existingUser){
             throw new Error("User not found.")
         }
+      
+        
         const newConnectionRequest=new connectionRequest({
             fromuserId,
             touserId,
             status
         });
+        console.log(existingUser.email)
         await newConnectionRequest.save();
-        const emailres=await SendEmail.run();
-        console.log(emailres);
+        
         res.send(`${req.user.firstName} Connection request ${status} successfully.`)
 
     }
