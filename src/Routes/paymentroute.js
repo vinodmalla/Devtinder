@@ -55,6 +55,7 @@ paymentroute.post("/payment/webhook",async(req,res)=>{
     Users.isPremium=true;
     Users.membershiptype=Payment.notes. membershipType;
     await user.save();
+    return res.send(200).json({msg:"Payment successfully"})
 
 
     }
