@@ -43,18 +43,18 @@ paymentroute.post("/create/order",adminAuth,async(req,res)=>{
 paymentroute.post("/payment/webhook",async(req,res)=>{
     try{
         const webhookSignature=req.header("X-Razorpay-Signature")
-    const isValidwebhook=validateWebhookSignature(JSON.stringify(webhookBody), webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET)
+    const isValidwebhook=validateWebhookSignature(JSON.stringify(req.body), webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET)
     if(!isValidwebhook){
         return res.status(400).json({msg:"Invalid webhook Signature"})
 
     }
-    const paymentDetails=res.body.payload.Payment.entity;
+    const paymentDetails=req.body.payload.Payment.entity;
     Payment.status=paymentDetails.status;
     await Payment.save();
     const Users=await user.findOne({orderId:paymentDetails.order_id});
     Users.isPremium=true;
     Users.membershiptype=Payment.notes. membershipType;
-    await user.save();
+    await Users.save();
     return res.send(200).json({msg:"Payment successfully"})
 
 
