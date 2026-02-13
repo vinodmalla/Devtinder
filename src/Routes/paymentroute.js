@@ -40,27 +40,51 @@ paymentroute.post("/create/order",adminAuth,async(req,res)=>{
 
     }
 })
-paymentroute.post("/payment/webhook",async(req,res)=>{
-    try{
-        const webhookSignature=req.header("X-Razorpay-Signature")
-    const isValidwebhook=validateWebhookSignature(JSON.stringify(req.body), webhookSignature, process.env.RAZORPAY_WEBHOOK_SECRET)
-    if(!isValidwebhook){
-        return res.status(400).json({msg:"Invalid webhook Signature"})
+paymentroute.post("/payment/webhook", async (req, res) => {
+  try {
 
-    }
-    const paymentDetails=req.body.payload.Payment.entity;
-    Payment.status=paymentDetails.status;
-    await Payment.save();
-    const Users=await user.findOne({orderId:paymentDetails.order_id});
-    Users.isPremium=true;
-    Users.membershiptype=Payment.notes. membershipType;
-    await Users.save();
-    return res.send(200).json({msg:"Payment successfully"})
+    const webhookSignature = req.header("X-Razorpay-Signature");
 
+    const isValidWebhook = validateWebhookSignature(
+      JSON.stringify(req.body),
+      webhookSignature,
+      process.env.RAZORPAY_WEBHOOK_SECRET
+    );
 
+    if (!isValidWebhook) {
+      return res.status(400).json({ msg: "Invalid webhook Signature" });
     }
-    catch(err){
-        console.log(err)
+
+    // ⚠️ razorpay payload key is lowercase `payment`
+    const paymentDetails = req.body.payload.payment.entity;
+
+    const payment = await Payment.findOne({
+      orderId: paymentDetails.order_id
+    });
+
+    if (!payment) {
+      return res.status(404).json({ msg: "Payment not found" });
     }
-})
+
+    payment.status = paymentDetails.status;
+    await payment.save();
+
+    const Users = await user.findOne({
+      orderId: paymentDetails.order_id
+    });
+
+    if (Users) {
+      Users.isPremium = true;
+      Users.membershiptype = payment.notes.membershipType;
+      await Users.save();
+    }
+
+    return res.status(200).json({ msg: "Payment successfully" });
+
+  } catch (err) {
+    console.log("Webhook error:", err);
+    return res.status(500).json({ msg: "Webhook error" });
+  }
+});
+
 module.exports=paymentroute;
