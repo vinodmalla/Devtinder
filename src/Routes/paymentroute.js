@@ -5,7 +5,7 @@ const instance=require("../utils/razorpay")
 const Payment=require("../Models/Payment")
 const memberShipAmount=require("../utils/constants")
 const {validateWebhookSignature} = require('razorpay/dist/utils/razorpay-utils');
-const user=require("../Models/user")
+const user=require("../Models/user");
 
 paymentroute.post("/create/order",adminAuth,async(req,res)=>{
     const {membershipType}=req.body;
@@ -51,15 +51,15 @@ paymentroute.post("/payment/webhook",async(req,res)=>{
     const paymentDetails=res.body.payload.Payment.entity;
     Payment.status=paymentDetails.status;
     await Payment.save();
-    const user=await user.findOne({orderId:paymentDetails.order_id});
-    user.isPremium=true;
-    user.membershiptype=Payment.notes. membershipType;
+    const Users=await user.findOne({orderId:paymentDetails.order_id});
+    Users.isPremium=true;
+    Users.membershiptype=Payment.notes. membershipType;
     await user.save();
 
 
     }
     catch(err){
-
+        console.log(err)
     }
 })
 module.exports=paymentroute;
