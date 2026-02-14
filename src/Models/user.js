@@ -55,7 +55,7 @@ const userSchema=new Schema({
         type:[String],
     },
     isPremium:{
-        type:String,
+        type:Boolean,
     },
     membershiptype:{
         type:String
